@@ -1,2 +1,1 @@
-# gussky.github.io
-Data visualization
+Data visualization project
