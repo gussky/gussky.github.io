@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import ScrollySupermarket from './ScrollySupermarket';
 
 function App() {
-  const [count, setCount] = useState(0)
+    return (
+        <div className="bg-[#fcfcfc] text-gray-800 font-serif leading-relaxed antialiased">
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+            {/* --- HERO SECTION --- */}
+            <section className="relative z-10 w-full h-screen flex flex-col justify-center py-20
+                          bg-white/40 backdrop-blur-md border-b border-white/20 backdrop-filter">
+                <div className="max-w-2xl mx-auto px-6">
+                    <h1 className="font-sans text-6xl font-extrabold tracking-tight mb-6 text-gray-900 drop-shadow-sm">
+                        The Hidden Shape of Food
+                    </h1>
+                    <p className="text-xl text-gray-900 mb-6 leading-8 font-medium">
+                        We walk the aisles every week, trusting the labels on the front of the box.
+                        But what if we could see the mathematical reality of what we eat?
+                    </p>
+                    <p className="text-xl text-gray-900 leading-8 font-medium">
+                        Using machine learning to analyze over 30,000 products, we mapped the hidden connections
+                        between ingredients, processing, and health.
+                    </p>
+                </div>
+            </section>
+
+            {/* --- THE SCROLLY EXPERIENCE --- */}
+            {/* Contains Supermarket -> Frosted Text -> Linked Dashboard */}
+            <div className="relative">
+                <ScrollySupermarket />
+            </div>
+
+            {/* --- FOOTER --- */}
+            <footer className="w-full bg-white py-12 text-center border-t border-gray-100 text-sm font-sans z-10 relative">
+                <p className="opacity-60">Data source: OpenFoodFacts.</p>
+            </footer>
+
+        </div>
+    );
 }
 
-export default App
+export default App;
