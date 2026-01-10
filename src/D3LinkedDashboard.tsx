@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import D3Scatter from './D3Scatter';
 import foodDataRaw from './assets/food_umap.json';
@@ -9,6 +9,7 @@ interface FoodPoint {
     name: string;
     brand: string;
     category: string;
+    ingredients_n: number;
     ns_color: [number, number, number];
     nova_color: [number, number, number];
     nutriscore: string;
