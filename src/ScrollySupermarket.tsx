@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LinkedD3Dashboard from './D3LinkedDashboard.tsx';
 
 // --- CONFIGURATION ---
@@ -138,28 +138,28 @@ export default function ScrollySupermarket() {
                 {/* 1. INTRO */}
                 <Section title="The Food Journey" subtitle="Scroll down to shop." />
 
-                <div ref={el => gapRefs.current[0] = el} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[0] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* 2. PRODUCE */}
                 <Section title="1. Produce Section" subtitle="Fresh fruits and vegetables.">
                     <PlaceholderChart label="Produce Analysis" />
                 </Section>
 
-                <div ref={el => gapRefs.current[1] = el} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[1] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* 3. MEAT */}
                 <Section title="2. Meat & Fish" subtitle="Proteins and seafood.">
                     <PlaceholderChart label="Meat Analysis" />
                 </Section>
 
-                <div ref={el => gapRefs.current[2] = el} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[2] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* 4. DAIRY */}
                 <Section title="3. Dairy Aisle" subtitle="Milk, cheese, and yogurt.">
                     <PlaceholderChart label="Dairy Analysis" />
                 </Section>
 
-                <div ref={el => gapRefs.current[3] = el} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[3] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* --- 5. FROSTED GLASS / MAPPING THE LANDSCAPE --- */}
                 <section className="min-h-screen flex flex-col justify-center w-full py-24
@@ -180,7 +180,7 @@ export default function ScrollySupermarket() {
                     </div>
                 </section>
 
-                <div ref={el => gapRefs.current[4] = el} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[4] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* --- 6. LINKED DASHBOARD --- */}
                 {/* Replaces Checkout Section */}
