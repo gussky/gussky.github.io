@@ -38,12 +38,8 @@ export function useProductData() {
 
             FEATURES.forEach((f) => {
               // Handle potential missing keys gracefully
-              const val = parseFloat(
-                // @ts-expect-error - dynamic access
-                row[f.key] ||
-                  // @ts-expect-error - dynamic access
-                  row[f.key.replace("saturatedFat", "saturated-fat_100g")]
-              );
+
+
 
               let csvKey = "";
               if (f.key === "energy") csvKey = "energy-kcal_100g";
