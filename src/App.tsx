@@ -1,3 +1,4 @@
+import React from 'react';
 import ScrollySupermarket from './ScrollySupermarket';
 
 function App() {

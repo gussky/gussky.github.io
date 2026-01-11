@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 
 // --- Configuration ---
@@ -37,7 +37,7 @@ export default function D3Radar() {
 
         // Line Generator: Creates the SVG path string "M100,200 L..."
         const radarLineGenerator = d3.lineRadial<number>()
-            .angle((_, i) => angleScale(i))
+            .angle((d, i) => angleScale(i))
             .radius((d) => rScale(d))
             .curve(d3.curveLinearClosed); // Closes the shape automatically
 
