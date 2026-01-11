@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import LinkedD3Dashboard from './D3LinkedDashboard.tsx';
 import Visualization1 from './Visualization1.tsx';
+import Visualization2 from './Visualization2.tsx';
 import Quiz from './Quiz.tsx';
 import meatFishEggsDataRaw from './assets/category_fish_meat_eggs.json';
+import additiveNetworkData from './assets/additive_network.json';
 
 // --- CONFIGURATION ---
 const MAP_SCALE = 0.85;
@@ -327,12 +329,21 @@ export default function ScrollySupermarket() {
 
                 <div ref={el => { gapRefs.current[3] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
+                {/* 3. ADDITIVES - Visualization2 */}
+                <Section title="3. Additives" subtitle="Exploring co-occurrence patterns in food additives.">
+                    <div className="w-full max-w-[2200px] h-[800px]">
+                        <Visualization2 data={additiveNetworkData} />
+                    </div>
+                </Section>
+
+                <div ref={el => { gapRefs.current[4] = el; }} className="w-full h-[75vh] pointer-events-none" />
+
                 {/* 4. DAIRY */}
                 <Section title="3. Dairy Aisle" subtitle="Milk, cheese, and yogurt.">
                     <PlaceholderChart label="Dairy Analysis" />
                 </Section>
 
-                <div ref={el => { gapRefs.current[4] = el; }} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[5] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* --- 5. FROSTED GLASS / MAPPING THE LANDSCAPE --- */}
                 <section className="min-h-screen flex flex-col justify-center w-full py-24
@@ -353,7 +364,7 @@ export default function ScrollySupermarket() {
                     </div>
                 </section>
 
-                <div ref={el => { gapRefs.current[5] = el; }} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[6] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* --- 6. LINKED DASHBOARD --- */}
                 {/* Replaces Checkout Section */}
@@ -361,7 +372,7 @@ export default function ScrollySupermarket() {
                     <LinkedD3Dashboard />
                 </Section>
 
-                <div ref={el => { gapRefs.current[6] = el; }} className="w-full h-[75vh] pointer-events-none" />
+                <div ref={el => { gapRefs.current[7] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* 7. POST-QUIZ (CHECKOUT) */}
                 <Section title="Final Check-out" subtitle="Now that you've explored the visualizations, rank the same products again to see if your understanding has changed.">
