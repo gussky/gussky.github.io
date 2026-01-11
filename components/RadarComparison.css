@@ -4,7 +4,7 @@
   min-height: 100vh;
   position: relative;
   padding-bottom: 4rem;
-  font-family: 'Inter', sans-serif; /* Default body font */
+  /* font-family: 'Inter', sans-serif;  Removed to match app default (sans) */
   color: #1f2937;
 }
 
@@ -19,7 +19,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  max-width: 1200px;
+  max-width: 1200px; /* Kept wide for dashboard feel, ScrollySupermarket is narrower but this needs space */
   margin: 0 auto;
   flex-direction: column;
   padding: 2rem 0;
@@ -64,27 +64,30 @@
 /* Typography */
 .text-center { text-align: center; }
 .font-bold { font-weight: 700; }
-.text-dark { color: #1f2937; }
-.text-gray { color: #6b7280; }
+.text-dark { color: #111827; } /* Updated to gray-900 */
+.text-gray { color: #6b7280; } /* Updated to gray-500 */
 .text-subtle { color: #9ca3af; }
 
 .title-main {
-  font-family: 'Space Grotesk', sans-serif; /* Display font */
-  font-size: 2.5rem; /* Larger */
+  /* font-family: 'Space Grotesk', sans-serif; REMOVED */
+  font-family: inherit; /* Use default sans */
+  font-size: 2.25rem; /* text-4xl */
+  line-height: 2.5rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem; /* mb-2 */
   text-align: center;
-  color: #111827; /* Darker black/gray */
-  letter-spacing: -0.02em; /* Tighter for modern look */
+  color: #111827; /* gray-900 */
+  letter-spacing: -0.025em; /* tracking-tight */
 }
 
 .subtitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; /* serif */
+  font-style: italic;
+  font-size: 1.25rem; /* text-xl */
+  line-height: 1.75rem;
   text-align: center;
-  margin-bottom: 3rem;
-  color: #374151;
+  margin-bottom: 2rem; /* mb-8 usually, but keeping 2rem min */
+  color: #6b7280; /* gray-500 */
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
@@ -103,7 +106,8 @@
   padding: 1rem;
   border: 2px solid;
   border-radius: 12px;
-  font-family: 'Space Grotesk', sans-serif;
+  /* font-family: 'Space Grotesk', sans-serif; REMOVED */
+  font-family: inherit;
   font-weight: 700;
   font-size: 1.25rem;
   letter-spacing: -0.01em;
@@ -137,7 +141,8 @@
 .axis-label-item {
   text-align: center;
   font-size: 0.75rem;
-  font-family: 'Space Grotesk', sans-serif; /* Tech feel */
+  /* font-family: 'Space Grotesk', sans-serif; REMOVED */
+  font-family: inherit;
   font-weight: 600;
   color: #6b7280;
   text-transform: uppercase;
@@ -158,7 +163,8 @@
 }
 
 .reveal-circle {
-  font-family: 'Space Grotesk', sans-serif;
+  /* font-family: 'Space Grotesk', sans-serif; REMOVED */
+  font-family: inherit;
   font-size: 6rem;
   font-weight: 700; /* Slightly lighter than 900 for this font */
   color: #fff;
@@ -175,9 +181,10 @@
 .reveal-text {
   max-width: 800px; /* Wider for storytelling */
   text-align: center;
-  font-size: 1.15rem; /* Smaller */
-  color: #374151;
-  line-height: 1.6; /* Tighter line height */
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 500; /* font-medium */
+  color: #111827; /* gray-900 */
+  line-height: 1.75; /* relaxed */
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
@@ -185,7 +192,7 @@
 }
 
 .story-paragraph {
-  opacity: 0.9;
+  opacity: 1; /* Was 0.9 */
 }
 
 

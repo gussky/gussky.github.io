@@ -1,25 +1,15 @@
 import type { Product } from "./types";
 import { getNutriScoreColor } from "./utils";
-// import { useVisibilityObserver } from "./useVisibilityObserver";
+import { FadeInSection } from "./FadeInSection";
 
 interface Stage2Props {
   product1: Product | null;
   product2: Product | null;
 }
 
-import { FadeInSection } from "./FadeInSection";
-
 export default function Stage2Reveal({ product1, product2 }: Stage2Props) {
-  // const [ref, isVisible] = useVisibilityObserver<HTMLDivElement>();
-
   return (
     <div className="stage-container stage-2">
-      <FadeInSection>
-        <h2 className="title-main" style={{ fontSize: "2.5rem" }}>
-          The Plot Twist
-        </h2>
-      </FadeInSection>
-
       <FadeInSection delay="0.2s">
         <div
           className="visual-comparison-row"
