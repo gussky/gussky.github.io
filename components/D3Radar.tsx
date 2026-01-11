@@ -39,7 +39,7 @@ export default function D3Radar() {
     // Line Generator: Creates the SVG path string "M100,200 L..."
     const radarLineGenerator = d3
       .lineRadial<number>()
-      .angle((d, i) => angleScale(i))
+      .angle((_, i) => angleScale(i))
       .radius((d) => rScale(d))
       .curve(d3.curveLinearClosed); // Closes the shape automatically
 
