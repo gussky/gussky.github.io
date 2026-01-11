@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import type { Product } from "./types";
 import { FEATURES } from "./constants";
-// import { useVisibilityObserver } from "./useVisibilityObserver";
+import { FadeInSection } from "./FadeInSection";
 
 interface Stage1Props {
   product1: Product | null;
@@ -16,15 +16,11 @@ interface Stage1Props {
   chartData: any[]; // Or define a specific shape for chart data
 }
 
-import { FadeInSection } from "./FadeInSection";
-
 export default function Stage1Butterfly({
   product1,
   product2,
   chartData,
 }: Stage1Props) {
-  // const [ref, isVisible] = useVisibilityObserver<HTMLDivElement>();
-
   return (
     <div className="stage-container stage-1">
       <FadeInSection>

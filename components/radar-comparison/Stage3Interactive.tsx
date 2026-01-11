@@ -11,7 +11,6 @@ import {
 import ProductSelector from "./ProductSelector";
 import type { Product } from "./types";
 import { getNutriScoreColor } from "./utils";
-// import { useVisibilityObserver } from "./useVisibilityObserver";
 import { FadeInSection } from "./FadeInSection";
 
 interface Stage3Props {
@@ -31,8 +30,6 @@ export default function Stage3Interactive({
   setSelection2,
   chartData,
 }: Stage3Props) {
-  // const [ref, isVisible] = useVisibilityObserver<HTMLDivElement>();
-
   return (
     <div className="stage-container stage-3">
       {/* LEFT COLUMN: Narrative & Inputs */}
