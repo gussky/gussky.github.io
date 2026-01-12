@@ -27,10 +27,9 @@ function App() {
       </section>
 
       {/* --- THE SCROLLY EXPERIENCE --- */}
-      {/* Contains Supermarket -> Frosted Text -> Linked Dashboard */}
+      {/* Contains Supermarket -> Frosted Text -> Linked Dashboard -> Radar Comparison -> Quiz */}
       <div className="relative">
         <ScrollySupermarket />
-        <RadarComparison />
       </div>
 
       {/* --- FOOTER --- */}
