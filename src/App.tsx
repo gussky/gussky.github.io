@@ -1,4 +1,4 @@
-import ScrollySupermarket from "./ScrollySupermarket";
+import ScrollySupermarket from './ScrollySupermarket';
 import RadarComparison from "../components/RadarComparison";
 
 function App() {
