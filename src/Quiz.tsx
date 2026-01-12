@@ -115,10 +115,18 @@ const Quiz = ({
                   border: '2px solid',
                   borderColor: isSubmitted && showResults
                     ? (isCorrect ? '#10b981' : '#ef4444')
+                    : answers[product.id] 
+                    ? '#3b82f6'
                     : '#e2e8f0',
                   backgroundColor: isSubmitted && showResults
                     ? (isCorrect ? '#f0fdf4' : '#fef2f2')
-                    : '#f8fafc'
+                    : answers[product.id]
+                    ? '#eff6ff'
+                    : '#f8fafc',
+                  boxShadow: answers[product.id] && !isSubmitted
+                    ? '0 2px 8px rgba(59, 130, 246, 0.15)'
+                    : 'none',
+                  transition: 'all 0.2s ease'
                 }}
               >
                 <div style={{ flex: 1 }}>
@@ -161,8 +169,8 @@ const Quiz = ({
                     } else {
                       if (isSelected) {
                          opacity = 1;
-                         scale = 1.1;
-                         border = '2px solid #cbd5e1';
+                         scale = 1.15;
+                         border = '3px solid #3b82f6';
                        }
                     }
                     return (
@@ -176,17 +184,36 @@ const Quiz = ({
                           borderRadius: '50%',
                           fontWeight: 'bold',
                           fontSize: '16px',
-                          transition: 'all 0.2s',
+                          transition: 'all 0.2s ease',
                           transform: `scale(${scale})`,
                           opacity: opacity,
                           border: border,
                           backgroundColor: GRADE_COLORS[grade as keyof typeof GRADE_COLORS], 
                           color: 'white',
                           cursor: isSubmitted ? 'default' : 'pointer',
-                          borderWidth: border !== 'none' ? '2px' : '0'
+                          borderWidth: border !== 'none' ? (isSelected && !isSubmitted ? '3px' : '2px') : '0',
+                          boxShadow: isSelected && !isSubmitted ? '0 4px 12px rgba(59, 130, 246, 0.4)' : 'none',
+                          position: 'relative'
                         }}
                       >
                         {grade}
+                        {isSelected && !isSubmitted && (
+                          <span style={{
+                            position: 'absolute',
+                            top: '-4px',
+                            right: '-4px',
+                            width: '18px',
+                            height: '18px',
+                            borderRadius: '50%',
+                            backgroundColor: '#3b82f6',
+                            border: '2px solid white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            fontWeight: 'bold'
+                          }}>✓</span>
+                        )}
                       </button>
                     );
                   })}
