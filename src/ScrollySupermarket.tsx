@@ -4,6 +4,13 @@ import LinkedD3Dashboard from "./D3LinkedDashboard.tsx";
 // --- CONFIGURATION ---
 const MAP_SCALE = 0.85;
 
+const QUIZ_PRODUCTS = [
+    { id: 1, name: "Fresh Salmon Fillet", category: "Fish Meat Eggs", correct: "A" },
+    { id: 2, name: "Processed Ham Slices", category: "Fish Meat Eggs", correct: "D" },
+    { id: 3, name: "Frozen Fish Sticks", category: "Fish Meat Eggs", correct: "E" },
+    { id: 4, name: "Organic Eggs", category: "Fish Meat Eggs", correct: "A" },
+];
+
 // We stick to the 5-segment structure but swap the content of the last two
 const SEGMENT_CONFIG = [
   { id: "start_to_produce", start: 0.0, end: 0.15 },
