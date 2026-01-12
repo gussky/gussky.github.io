@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import type { JSX } from 'react';
 import { ChevronDown, Activity, Zap, Layers } from 'lucide-react';
 
 // --- Constants & Color Scales ---
@@ -44,8 +45,7 @@ const project3D = (x: number, y: number, z: number, angleDeg: number, pivotX: nu
 
 
 // --- Main Visualization Component ---
-const Visualization1 = ({ preAnswers, data, scrollProgress: externalScrollProgress, onComplete }: { 
-  preAnswers: Record<number, string>, 
+const Visualization1 = ({ data, scrollProgress: externalScrollProgress, onComplete }: { 
   data: any[], 
   scrollProgress?: number,
   onComplete?: () => void 
@@ -218,7 +218,7 @@ const Visualization1 = ({ preAnswers, data, scrollProgress: externalScrollProgre
       count: data.filter(d => d.grade === g).length
     }));
     // Create product nodes with shorter labels for display
-    const productNodes = SAMPLED_PRODUCTS.map((product, index) => {
+    const productNodes = SAMPLED_PRODUCTS.map((product) => {
       // Use shortName from data if available, otherwise truncate
       const fullName = product.productName || `Product ${product.id}`;
       const shortName = product.shortName || (fullName.length > 20 
@@ -329,7 +329,7 @@ const Visualization1 = ({ preAnswers, data, scrollProgress: externalScrollProgre
   };
 
   const renderFlows = () => {
-    const flows = [];
+    const flows: JSX.Element[] = [];
     const currentPivotX = getPivotX();
     const effectiveProgress = Math.min(scrollProgress, 2.5);
     
@@ -635,7 +635,7 @@ const Visualization1 = ({ preAnswers, data, scrollProgress: externalScrollProgre
                             <g 
                                 key={node.id} 
                                 transform={`translate(${pos.x},${pos.y})`} 
-                                onMouseEnter={(e) => {
+                                onMouseEnter={() => {
                                     setHoveredNode(node.id);
                                     if (isProduct) {
                                         const product = SAMPLED_PRODUCTS.find(p => `product-${p.id}` === node.id);
@@ -651,7 +651,7 @@ const Visualization1 = ({ preAnswers, data, scrollProgress: externalScrollProgre
                                 style={{ cursor: 'pointer' }}
                             >
                                 <circle r={hoverRadius} fill={node.color} stroke="#fff" strokeWidth={hoverStrokeWidth} fillOpacity={hoverOpacity} />
-                                {isGrade && (
+                                {isGrade && 'count' in node && (
                                     <text dy={4} textAnchor="middle" style={{ fontSize: '20px', fontWeight: 'bold', fill: '#ffffff', pointerEvents: 'none' }}>{node.count}</text>
                                 )}
                                 {isProduct && pos.opacity > 0.5 && (() => {

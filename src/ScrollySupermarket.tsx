@@ -102,11 +102,9 @@ export default function ScrollySupermarket() {
             const spacer = chapter2SpacerRef.current; // This is the container
             const section = chapter2SectionRef.current; // This is the sticky element
             const winHeight = window.innerHeight;
-            const containerHeight = spacer.offsetHeight; // Total container height (with padding)
             
             // Padding configuration: lock periods to analyze charts
             const paddingBefore = winHeight * 1.5; // 150vh lock before animation starts (analyze stage 1)
-            const paddingAfter = winHeight * 1.5; // 150vh lock after animation ends (analyze stage 3)
             const animationHeight = winHeight * 2; // 200vh for fast animation between stages (reduced from 300vh)
             
             // Get positions relative to viewport
@@ -320,7 +318,6 @@ export default function ScrollySupermarket() {
                         <Section title="2. Meat & Fish" subtitle="Proteins and seafood.">
                             <div className="w-full max-w-[2200px] h-[800px]">
                                 <Visualization1
-                                    preAnswers={preAnswers}
                                     data={transformedFoodData}
                                     scrollProgress={chapter2ScrollProgress}
                                     onComplete={() => {
