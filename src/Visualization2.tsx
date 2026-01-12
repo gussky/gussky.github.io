@@ -1,24 +1,15 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { 
-  Activity, 
   Beaker, 
-  FileText, 
   X, 
   Grid, 
   Share2,
-  Leaf,
-  Layers,
-  Info,
-  TrendingUp,
   RefreshCcw,
-  Edit3,
   ShoppingBag,
   Eye,
   Search,
   FlaskConical,
-  AlertTriangle,
-  Link as LinkIcon,
   BarChart3,
   Store,
   ChevronDown
@@ -26,17 +17,18 @@ import {
 
 // --- VISUAL CONFIGURATION ---
 
-const THEME = {
-    bg: "#F8FAFC", 
-    panelBg: "rgba(255, 255, 255, 0.95)",
-    textMain: "#0F172A", 
-    textMuted: "#64748B", 
-    border: "#E2E8F0", 
-    accent: "#0EA5E9",
-    riskHigh: "#EF4444",
-    riskMed: "#F59E0B",
-    riskLow: "#10B981"
-};
+// THEME kept for potential future use
+// const THEME = {
+//     bg: "#F8FAFC", 
+//     panelBg: "rgba(255, 255, 255, 0.95)",
+//     textMain: "#0F172A", 
+//     textMuted: "#64748B", 
+//     border: "#E2E8F0", 
+//     accent: "#0EA5E9",
+//     riskHigh: "#EF4444",
+//     riskMed: "#F59E0B",
+//     riskLow: "#10B981"
+// };
 
 const CLUSTERS = {
   GENERAL: { id: 'general', label: "Preservatives", color: "#22c55e", x: 0.5, y: -0.5 }, // Q1: Upper Right
@@ -62,26 +54,26 @@ const NUTRI_COLORS = {
   E: "#ef4444"  
 };
 
-// Helper to generate boxPlotData from nutriScoreDist and score
-const generateBoxPlotData = (nutriScoreDist: number[], score: string) => {
-  const scoreMap: Record<string, number> = { A: -5, B: 0, C: 5, D: 20, E: 25 };
-  const baseScore = scoreMap[score] || 5;
-  
-  return [1, 2, 3, 4].map(nova => {
-    let base = baseScore + (nova - 1) * 7; 
-    const median = Math.min(40, Math.max(-15, base + (Math.random() * 10 - 5)));
-    const spread = 5 + Math.random() * 5;
-    
-    return {
-      nova,
-      median,
-      q1: Math.max(-15, median - spread/2),
-      q3: Math.min(40, median + spread/2),
-      min: Math.max(-15, median - spread),
-      max: Math.min(40, median + spread)
-    };
-  });
-};
+// Helper to generate boxPlotData from nutriScoreDist and score (kept for potential future use)
+// const generateBoxPlotData = (_nutriScoreDist: number[], score: string) => {
+//   const scoreMap: Record<string, number> = { A: -5, B: 0, C: 5, D: 20, E: 25 };
+//   const baseScore = scoreMap[score] || 5;
+//   
+//   return [1, 2, 3, 4].map(nova => {
+//     let base = baseScore + (nova - 1) * 7; 
+//     const median = Math.min(40, Math.max(-15, base + (Math.random() * 10 - 5)));
+//     const spread = 5 + Math.random() * 5;
+//     
+//     return {
+//       nova,
+//       median,
+//       q1: Math.max(-15, median - spread/2),
+//       q3: Math.min(40, median + spread/2),
+//       min: Math.max(-15, median - spread),
+//       max: Math.min(40, median + spread)
+//     };
+//   });
+// };
 
 // --- SUB-COMPONENTS ---
 
@@ -147,7 +139,7 @@ const DistributionPredictor = ({ actualData }: { actualData: number[] }) => {
     }, [isRevealed, userPoints, actualData]);
 
     const generatePath = d3.line<number>()
-        .x((d, i) => (i * 20) + 10) 
+        .x((_d, i) => (i * 20) + 10) 
         .y(d => (1 - d) * 100)
         .curve(d3.curveMonotoneX);
 
@@ -292,7 +284,7 @@ const DistributionPredictor = ({ actualData }: { actualData: number[] }) => {
 };
 
 // 2. Side Panel - Improved styling
-const SidePanel = ({ selection, onClose, neighbors, allNodes }: { selection: any[], onClose: () => void, neighbors: any[], allNodes?: any[] }) => {
+const SidePanel = ({ selection, onClose, neighbors }: { selection: any[], onClose: () => void, neighbors: any[] }) => {
     if (!selection || selection.length === 0) return null;
 
     const isMulti = selection.length > 1;
@@ -493,7 +485,7 @@ const BrandFilter = ({ activeBrand, onSelect, availableBrands }: {
       >
         <Store size={14} />
         {activeBrand 
-          ? availableBrands.find(b => b.id === activeBrand)?.label || 'Brand'
+          ? availableBrands.find((b: any) => b.id === activeBrand)?.label || 'Brand'
           : 'Brands'}
         <ChevronDown size={12} style={{ transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
@@ -585,12 +577,12 @@ const Visualization2 = ({ data }: { data: any }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [selection, setSelection] = useState<any[]>([]); 
-  const [hoveredNode, setHoveredNode] = useState<any>(null);
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [, setHoveredNode] = useState<any>(null); // Used for hover effects
+  const [, setZoomLevel] = useState(1); // Used to track zoom state
   const [viewMode, setViewMode] = useState<'cluster' | 'grade'>('cluster');
   const [brandFilter, setBrandFilter] = useState<string | null>(null);
   const [popupNode, setPopupNode] = useState<any>(null);
-  const [popupPosition, setPopupPosition] = useState<{ x: number, y: number } | null>(null);
+  const [, setPopupPosition] = useState<{ x: number, y: number } | null>(null); // Used for popup positioning
   
   const simulationRef = useRef<d3.Simulation<any, any> | null>(null);
   const nodesSelectionRef = useRef<d3.Selection<SVGGElement, any, SVGGElement, any> | null>(null);
@@ -644,7 +636,7 @@ const Visualization2 = ({ data }: { data: any }) => {
     
     // Filter by brand if selected
     if (brandFilter) {
-      const selectedBrandLabel = availableBrands.find(b => b.id === brandFilter)?.label;
+      const selectedBrandLabel = availableBrands.find((b: any) => b.id === brandFilter)?.label;
       if (selectedBrandLabel) {
         nodes = nodes.filter((node: any) => 
           node.brands && node.brands.some((b: string) => b === selectedBrandLabel)
@@ -758,7 +750,13 @@ const Visualization2 = ({ data }: { data: any }) => {
     const mainGroup = svg.append("g")
       .attr("transform", `translate(${width/2}, ${height/2})`);
 
-    const rScale = d3.scaleSqrt().domain([0, d3.max(processedData.nodes, (d: any) => d.freq) || 5000]).range([20, 55]);
+    const maxFreqValue = (d3.max(processedData.nodes, (d: any) => {
+      const freq = typeof d.freq === 'number' ? d.freq : Number(d.freq) || 0;
+      return freq;
+    }) || 5000);
+    const rScale = d3.scaleSqrt<number, number>()
+      .domain([0, Number(maxFreqValue)] as [number, number])
+      .range([20, 55]);
 
     const bgLayer = mainGroup.append("g").attr("class", "background-layer");
     const hullG = mainGroup.append("g").attr("class", "hulls"); 
@@ -774,7 +772,7 @@ const Visualization2 = ({ data }: { data: any }) => {
         .attr("class", "grade-zone");
       
       zones.append("rect")
-        .attr("x", (d: any, i: number) => -width/2 + i * zoneWidth)
+        .attr("x", (_d: any, i: number) => -width/2 + i * zoneWidth)
         .attr("y", -height/2 + 60)
         .attr("width", zoneWidth)
         .attr("height", height - 120)
@@ -786,7 +784,7 @@ const Visualization2 = ({ data }: { data: any }) => {
         .attr("rx", 20);
 
       zones.append("text")
-        .attr("x", (d: any, i: number) => -width/2 + i * zoneWidth + zoneWidth/2)
+        .attr("x", (_d: any, i: number) => -width/2 + i * zoneWidth + zoneWidth/2)
         .attr("y", -height/2 + 40)
         .attr("text-anchor", "middle")
         .style("fill", (d: any) => d[1].color)
@@ -803,13 +801,13 @@ const Visualization2 = ({ data }: { data: any }) => {
       .attr("stroke-opacity", 0.4)
       .attr("stroke-width", (d: any) => Math.sqrt(d.weight || 1) * 0.5);
     
-    linksSelectionRef.current = link;
+    linksSelectionRef.current = link as any;
 
     const node = nodeG.selectAll("g")
       .data(processedData.nodes)
       .join("g");
 
-    nodesSelectionRef.current = node;
+    nodesSelectionRef.current = node as any;
 
     node.append("circle")
       .attr("r", (d: any) => rScale(d.freq))
@@ -845,7 +843,7 @@ const Visualization2 = ({ data }: { data: any }) => {
       .style("text-shadow", "0 1px 3px rgba(255, 255, 255, 0.9)")
       .text((d: any) => d.id);
     
-    const microG = node.append("g").attr("class", "micro-view").attr("opacity", 0);
+    node.append("g").attr("class", "micro-view").attr("opacity", 0);
     node.each(function(d: any) {
       const g = d3.select(this).select(".micro-view");
       const r = rScale(d.freq);
@@ -976,7 +974,7 @@ const Visualization2 = ({ data }: { data: any }) => {
         .attr("stroke-width", Math.max(1.5, r/20));
       
       // X-axis labels: Only show Nova groups with data (larger for visibility)
-      availableNovaGroups.forEach(nova => {
+      availableNovaGroups.forEach((nova: number) => {
         const tx = scaleX(String(nova))! + scaleX.bandwidth()! / 2;
         content.append("text")
           .attr("x", tx)
@@ -1048,7 +1046,7 @@ const Visualization2 = ({ data }: { data: any }) => {
           const boxY = Math.min(q1Y, q3Y);
           
           content.append("rect")
-            .attr("x", bx)
+            .attr("x", bx ?? 0)
             .attr("width", bw)
             .attr("y", boxY)
             .attr("height", Math.max(2, boxHeight))
@@ -1059,8 +1057,8 @@ const Visualization2 = ({ data }: { data: any }) => {
           
           // Median line (thicker for visibility)
           content.append("line")
-            .attr("x1", bx)
-            .attr("x2", bx! + bw)
+            .attr("x1", bx ?? 0)
+            .attr("x2", (bx ?? 0) + bw)
             .attr("y1", scaleY(bp.median))
             .attr("y2", scaleY(bp.median))
             .attr("stroke", "#1e293b")
@@ -1161,7 +1159,7 @@ const Visualization2 = ({ data }: { data: any }) => {
       const shouldShowHulls = viewMode === 'cluster';
       
       hullG.selectAll("path").data(shouldShowHulls ? groups : []).join("path")
-        .attr("d", ([groupId, nodes]: any) => {
+        .attr("d", ([_groupId, nodes]: any) => {
           const points = nodes.map((n: any) => [n.x, n.y]);
           if (points.length < 3) return ""; 
           const hull = d3.polygonHull(points as [number, number][]);
@@ -1178,12 +1176,12 @@ const Visualization2 = ({ data }: { data: any }) => {
       // Add labels to hulls showing cluster names (only in cluster mode)
       hullG.selectAll("text.hull-label").data(shouldShowHulls ? groups : []).join("text")
         .attr("class", "hull-label")
-        .attr("x", ([g, n]: any) => {
+        .attr("x", ([_g, n]: any) => {
           if (n.length < 3) return 0;
           const centroid = d3.polygonCentroid(n.map((p: any) => [p.x, p.y]));
           return centroid[0];
         })
-        .attr("y", ([g, n]: any) => {
+        .attr("y", ([_g, n]: any) => {
           if (n.length < 3) return 0;
           const centroid = d3.polygonCentroid(n.map((p: any) => [p.x, p.y]));
           return centroid[1];
@@ -1256,10 +1254,10 @@ const Visualization2 = ({ data }: { data: any }) => {
               const screenY = height/2 + (node.y * t.k) + t.y;
               const distance = Math.sqrt(Math.pow(screenX - viewportCenterX, 2) + Math.pow(screenY - viewportCenterY, 2));
               return { node, distance };
-            }).sort((a, b) => a.distance - b.distance);
+            }).sort((a: any, b: any) => a.distance - b.distance);
             
             // Show only top 5 closest nodes
-            const visibleNodeIds = new Set(nodesWithDistance.slice(0, 5).map(({ node }) => node.id));
+            const visibleNodeIds = new Set(nodesWithDistance.slice(0, 5).map(({ node }: { node: any }) => node.id));
             
             nodeG.selectAll("g").each(function(d: any) {
               const isVisible = visibleNodeIds.has(d.id);
@@ -1276,8 +1274,7 @@ const Visualization2 = ({ data }: { data: any }) => {
             linkG.attr("opacity", 0.05);
           } else {
             // When zoomed out, hide miniplots for selected nodes, but always show E-number
-            nodeG.selectAll("g").each(function(d: any) {
-              const isSelected = currentPopupNode && currentPopupNode.id === d.id;
+            nodeG.selectAll("g").each(function(_d: any) {
               d3.select(this).selectAll(".micro-view").attr("opacity", 0);
               d3.select(this).selectAll(".simple-view").attr("opacity", 0);
               // Always show E-number (macro-view)
@@ -1316,10 +1313,10 @@ const Visualization2 = ({ data }: { data: any }) => {
       .on("drag", dragged)
       .on("end", dragended);
     
-    node.call(nodeDrag);
+    node.call(nodeDrag as any);
     node.on("click", (e: any, d: any) => handleNodeClick(d, e));
 
-    node.on("mouseover", function(e: any, d: any) {
+    node.on("mouseover", function(_e: any, d: any) {
       setHoveredNode(d);
       const targetNode = d;
       const linkedIds = new Set();
@@ -1356,8 +1353,12 @@ const Visualization2 = ({ data }: { data: any }) => {
     const zoneWidth = containerWidth / 5;
     
     // Calculate rScale for collision detection
-    const rScale = d3.scaleSqrt()
-      .domain([0, d3.max(processedData.nodes, (d: any) => d.freq) || 5000])
+    const maxFreqForCollision = (d3.max(processedData.nodes, (d: any) => {
+      const freq = typeof d.freq === 'number' ? d.freq : Number(d.freq) || 0;
+      return freq;
+    }) || 5000);
+    const rScale = d3.scaleSqrt<number, number>()
+      .domain([0, Number(maxFreqForCollision)] as [number, number])
       .range([20, 55]);
     
     const gradeCenters: Record<string, number> = {
@@ -1381,7 +1382,7 @@ const Visualization2 = ({ data }: { data: any }) => {
       
       // Filter links to only show within-cluster connections (optional - can show all)
       // For now, we'll show all links but with reduced strength
-      const clusterLinks = processedData.links.filter((l: any) => {
+      const clusterLinks = processedData.links.filter((_l: any) => {
         // Optionally filter: only show links within same cluster
         // return l.source.group === l.target.group;
         return true; // Show all links for now
@@ -1452,7 +1453,7 @@ const Visualization2 = ({ data }: { data: any }) => {
     const nodes = nodesSelectionRef.current;
     
     if (brandFilter && viewMode === 'grade') {
-      const selectedBrandLabel = availableBrands.find(b => b.id === brandFilter)?.label;
+      const selectedBrandLabel = availableBrands.find((b: any) => b.id === brandFilter)?.label;
       if (selectedBrandLabel) {
         nodes.transition().duration(500).attr("opacity", (d: any) => {
           if (d.brands && d.brands.includes(selectedBrandLabel)) {
@@ -1825,7 +1826,6 @@ const Visualization2 = ({ data }: { data: any }) => {
             setPopupNode(null);
             setPopupPosition(null);
           }}
-          allNodes={processedData.nodes}
         />
       )}
 
@@ -1993,7 +1993,7 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
       .attr("stroke-width", 2);
 
     // X-axis labels - "NOVA 1", "NOVA 3", "NOVA 4" format
-    novaGroups.forEach(nova => {
+    novaGroups.forEach((nova: number) => {
       const tx = scaleX(String(nova))! + scaleX.bandwidth()! / 2;
       content.append("text")
         .attr("x", tx)
@@ -2061,7 +2061,7 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
       const boxY = Math.min(q1Y, q3Y);
 
       content.append("rect")
-        .attr("x", bx)
+        .attr("x", bx ?? 0)
         .attr("width", bw)
         .attr("y", boxY)
         .attr("height", Math.max(3, boxHeight))
@@ -2072,8 +2072,8 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
 
       // Median line
       content.append("line")
-        .attr("x1", bx)
-        .attr("x2", bx! + bw)
+        .attr("x1", bx ?? 0)
+        .attr("x2", (bx ?? 0) + bw)
         .attr("y1", scaleY(bp.median))
         .attr("y2", scaleY(bp.median))
         .attr("stroke", "#1e293b")
@@ -2095,8 +2095,6 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
 
     // Nutri-Score Legend on the right (like screenshot) - sized to fit
     const legendX = plotX + plotW + 8; // Reduced spacing
-    const legendY = plotY;
-    const legendHeight = plotH;
     const legendBarWidth = 25; // Use different variable name
     
     const gradeColors = [
@@ -2107,7 +2105,7 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
       { grade: 'E', color: '#ef4444', range: [30, 40] }
     ];
     
-    gradeColors.forEach((grade, i) => {
+    gradeColors.forEach((grade) => {
       const yStart = scaleY(grade.range[1]);
       const yEnd = scaleY(grade.range[0]);
       const height = Math.abs(yEnd - yStart);

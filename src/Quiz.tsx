@@ -1,4 +1,3 @@
-import React from 'react';
 import { Trophy, CheckCircle, XCircle } from 'lucide-react';
 
 const GRADE_COLORS = {
