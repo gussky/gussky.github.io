@@ -1,3 +1,4 @@
+import React from 'react';
 import ScrollySupermarket from './ScrollySupermarket';
 import RadarComparison from "../components/RadarComparison";
 
