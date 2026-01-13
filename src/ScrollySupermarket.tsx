@@ -6,6 +6,7 @@ import Quiz from './Quiz.tsx';
 import RadarComparison from '../components/RadarComparison';
 import meatFishEggsDataRaw from './assets/category_fish_meat_eggs.json';
 import additiveNetworkData from './assets/additive_network.json';
+import ScatterMatrix from "../components/ScatterD3"; // adjust path if your file is in pages/ or src/
 
 // --- CONFIGURATION ---
 const MAP_SCALE = 0.85;
@@ -340,10 +341,13 @@ export default function ScrollySupermarket() {
 
                 <div ref={el => { gapRefs.current[4] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
-                {/* 4. DAIRY */}
-                <Section title="3. Dairy Aisle" subtitle="Milk, cheese, and yogurt.">
-                    <PlaceholderChart label="Dairy Analysis" />
-                </Section>
+               {/* 4. DAIRY */}
+<Section title="3. Dairy Aisle" subtitle="A closer look into the nutrition content of milk, cheese, yogurt and other dairy products.">
+  {/* replace PlaceholderChart with the scatter matrix component */}
+  <div style={{ minHeight: 360 }}>
+    <ScatterMatrix />
+  </div>
+</Section>
 
                 <div ref={el => { gapRefs.current[5] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
