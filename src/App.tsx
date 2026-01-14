@@ -18,8 +18,8 @@ function App() {
             we eat?
           </p>
           <p className="text-xl text-gray-900 leading-8 font-medium">
-            Using machine learning to analyze over 30,000 products, we mapped
-            the hidden connections between ingredients, processing, and health.
+            Using data Visualization to analyze over 30,000 food products, we map
+            the hidden connections among nutrient compositions, ingredients and processing.
           </p>
         </div>
       </section>

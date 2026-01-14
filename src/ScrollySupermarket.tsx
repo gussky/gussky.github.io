@@ -7,6 +7,7 @@ import RadarComparison from '../components/RadarComparison';
 import meatFishEggsDataRaw from './assets/category_fish_meat_eggs.json';
 import additiveNetworkData from './assets/additive_network.json';
 import ScatterMatrix from "../components/ScatterD3"; // adjust path if your file is in pages/ or src/
+import NutrientComposition from "../components/NutrientComposition"; // add this (adjust name/path/casing if needed)
 
 // --- CONFIGURATION ---
 const MAP_SCALE = 0.85;
@@ -288,17 +289,74 @@ export default function ScrollySupermarket() {
 
                 <div ref={el => { gapRefs.current[0] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
-                {/* 1. INTRO */}
+{/* 1. nutri calc */}
+<Section
+  title="What are Nutri-Scores and Nutri-Grades?"
+  subtitle="Understand how each nutrient is associated with negative and positive points that combine to produce grades A–E"
+>
+     
+  <div
+    style={{
+      padding: "1rem",
+      position: "relative",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    }}
+  >
+    {/* Text block aligned with plot */}
+    <div
+      style={{
+        maxWidth: "1200px",
+        marginBottom: "0.3rem",
+        textAlign: "justify",
+      }}
+      className="text-lg text-gray-900 font-medium"
+    >
+      <p style={{ marginBottom: "0.4rem" }}>
+        Ever wondered why two foods can share the same Nutri-Grade even when their nutrient profiles look very different? 
+        Nutri-Score reflects nutritional quality by converting nutrient content into points. Negative points are assigned for energy, sugars,
+        saturated fats, and sodium, while positive points are assigned for protein, fiber, and fruit/vegetable/nut content. The final
+        Nutri-Score is computed as the difference between these totals (Negative points − Positive points), and the resulting value is
+        mapped to the A–E grade bands. 
+        Lower Nutri-Score values (more negative) correspond to better grades (A, B) and healthier products, while higher values (more positive) lead to worse grades (C, D, E), labeling the products unhealthy.
+      </p>
+
+      <br></br>
+
+      <p style={{ marginBottom: "0.4rem" }}>
+        This plot visualizes how each nutrient contributes to Nutri-Score calculation. For each Nutri-Grade on the y-axis, the stacked bar on the right of 0th mark
+        shows the average negative-point composition of the nutrients, and the stacked bar on the left shows the average positive-point composition. 
+        The black diamond (♦) marks the average Nutri-Score value across all products for each Nutri-Grade.
+      </p>
+
+      <br></br>
+
+      <p>
+        Observe the chart from A to E: Grade A mostly shows larger positive contributions (from healthier nutrients) and a net score that remains on the 
+        negative side, while Grades B and C reflect a more intermediate balance as the influence of negative nutrients increase and positives 
+        decline. For Grades D and E, negative components dominate and the net score rises into the highest bands, making the product "unhealthy". 
+        Hover over any segment to view the nutrient's average contribution to that Nutri-Grade and find out which nutrients account for the differences between grades.
+      </p>
+    </div>
+  </div>
+ 
+        <div className="w-full" style={{ minHeight: "110vh", pointerEvents: "auto" }}>
+            <div className="w-full max-w-[1600px] mx-auto" style={{ minHeight: "110vh", pointerEvents: "auto" }}>
+                <NutrientComposition />
+                  </div>
+                </div>
+</Section>
+
+
+                <div ref={el => { gapRefs.current[2] = el; }} className="w-full h-[75vh] pointer-events-none" />
+
+                {/* 2. INTRO */}
                 <Section title="The Food Journey" subtitle="Scroll down to shop." />
 
                 <div ref={el => { gapRefs.current[1] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
-                {/* 2. PRODUCE */}
-                <Section title="1. Produce Section" subtitle="Fresh fruits and vegetables.">
-                    <PlaceholderChart label="Produce Analysis" />
-                </Section>
-
-                <div ref={el => { gapRefs.current[2] = el; }} className="w-full h-[75vh] pointer-events-none" />
+                
 
                 {/* 3. MEAT & FISH - PINNED SECTION */}
                 {/* Container that creates scroll distance - the sticky section will pin inside this */}
@@ -316,7 +374,7 @@ export default function ScrollySupermarket() {
                             minHeight: '100vh'
                         }}
                     >
-                        <Section title="2. Meat & Fish" subtitle="Proteins and seafood.">
+                        <Section title="Meat & Fish" subtitle="Proteins and seafood.">
                             <div className="w-full max-w-[2200px] h-[800px]">
                                 <Visualization1
                                     data={transformedFoodData}
@@ -333,7 +391,7 @@ export default function ScrollySupermarket() {
                 <div ref={el => { gapRefs.current[3] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                 {/* 3. ADDITIVES - Visualization2 */}
-                <Section title="3. Additives" subtitle="Exploring co-occurrence patterns in food additives.">
+                <Section title="Additives" subtitle="Exploring co-occurrence patterns in food additives.">
                     <div className="w-full max-w-[2200px] h-[800px]">
                         <Visualization2 data={additiveNetworkData} />
                     </div>
@@ -342,7 +400,7 @@ export default function ScrollySupermarket() {
                 <div ref={el => { gapRefs.current[4] = el; }} className="w-full h-[75vh] pointer-events-none" />
 
                {/* 4. DAIRY */}
-<Section title="3. Dairy Aisle" subtitle="A closer look into the nutrition content of milk, cheese, yogurt and other dairy products.">
+<Section title="Dairy Aisle" subtitle="A closer look into the nutrition content of milk, cheese, yogurt and other dairy products.">
   {/* replace PlaceholderChart with the scatter matrix component */}
   <div style={{ minHeight: 360 }}>
     <ScatterMatrix />
@@ -357,7 +415,7 @@ export default function ScrollySupermarket() {
                                     shadow-lg z-20">
                     <div className="max-w-2xl mx-auto px-6">
                         <h2 className="font-sans text-4xl font-bold mb-6 text-gray-900">
-                            4. Mapping the Landscape
+                            Mapping the Landscape
                         </h2>
                         <p className="text-lg text-gray-900 mb-6 font-medium">
                             As we leave the physical aisles, a new map emerges.
