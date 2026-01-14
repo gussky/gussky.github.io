@@ -11,7 +11,9 @@ interface ScatterProps {
     onSelectionChange: (indices: Set<number>) => void;
     onHoverChange: (d: any | null, x: number, y: number) => void;
 
-    // NEW: Shared Zoom Props
+    // NEW: Click Handler for Recommendation
+    onPointClick?: (d: any) => void;
+
     zoomTransform: d3.ZoomTransform;
     onZoomChange: (t: d3.ZoomTransform) => void;
 
@@ -28,8 +30,9 @@ const D3Scatter: React.FC<ScatterProps> = ({
                                                selectedIndices,
                                                onSelectionChange,
                                                onHoverChange,
-                                               zoomTransform, // <--- Received from parent
-                                               onZoomChange,  // <--- Callback to parent
+                                               onPointClick, // <--- Destructure this
+                                               zoomTransform,
+                                               onZoomChange,
                                                interactionMode,
                                                width = 400,
                                                height = 400
@@ -64,7 +67,6 @@ const D3Scatter: React.FC<ScatterProps> = ({
         const ctx = canvas?.getContext('2d');
         if (!canvas || !ctx || !xScale || !yScale) return;
 
-        // Use the prop directly
         const t = zoomTransform;
 
         ctx.save();
@@ -109,7 +111,6 @@ const D3Scatter: React.FC<ScatterProps> = ({
         ctx.restore();
     };
 
-    // Draw whenever props change (including zoomTransform)
     useEffect(() => {
         draw();
     }, [data, selectedIndices, zoomTransform, width, height]);
@@ -156,7 +157,6 @@ const D3Scatter: React.FC<ScatterProps> = ({
 
                     if (Math.abs(x1 - x0) < 5 || Math.abs(y1 - y0) < 5) return;
 
-                    // Calculate New Transform locally
                     const k = Math.min(width / (x1 - x0), height / (y1 - y0));
                     const currentT = zoomTransform;
 
@@ -164,7 +164,6 @@ const D3Scatter: React.FC<ScatterProps> = ({
                     const newX = currentT.x * k - x0 * k;
                     const newY = currentT.y * k - y0 * k;
 
-                    // Send to Parent (LinkedD3Dashboard)
                     onZoomChange(d3.zoomIdentity.translate(newX, newY).scale(newK));
                 });
 
@@ -175,7 +174,6 @@ const D3Scatter: React.FC<ScatterProps> = ({
             brushGroup.selectAll("rect").style("cursor", "zoom-in");
             brushGroup.select(".overlay").on("mousemove", handleMouseMove);
 
-            // Double Click to Reset
             svg.on("dblclick", () => {
                 onZoomChange(d3.zoomIdentity);
             });
@@ -187,12 +185,27 @@ const D3Scatter: React.FC<ScatterProps> = ({
                 .extent([[0, 0], [width, height]])
                 .keyModifiers(false)
                 .on("end", (event) => {
+                    // CASE 1: Empty Selection (User just clicked)
                     if (!event.selection) {
-                        onSelectionChange(new Set());
+                        // Check if they clicked a point
+                        const [mx, my] = d3.pointer(event, svgRef.current);
+                        const t = zoomTransform;
+                        const tx = (mx - t.x) / t.k;
+                        const ty = (my - t.y) / t.k;
+
+                        const closest = quadtree.find(tx, ty, 10 / t.k);
+
+                        if (closest && onPointClick) {
+                            onPointClick(closest); // <--- TRIGGER RECOMMENDATION
+                        } else {
+                            onSelectionChange(new Set()); // Normal clear
+                        }
                         return;
                     }
+
+                    // CASE 2: Drag Selection
                     const [[x0, y0], [x1, y1]] = event.selection;
-                    const t = zoomTransform; // Use prop
+                    const t = zoomTransform;
 
                     const rx0 = (x0 - t.x) / t.k;
                     const ry0 = (y0 - t.y) / t.k;
@@ -227,7 +240,7 @@ const D3Scatter: React.FC<ScatterProps> = ({
             brushGroup.selectAll("rect").style("cursor", "crosshair");
             brushGroup.select(".overlay").on("mousemove", handleMouseMove);
         }
-    }, [interactionMode, width, height, xScale, yScale, zoomTransform]); // Add zoomTransform as dependency
+    }, [interactionMode, width, height, xScale, yScale, zoomTransform]);
 
     return (
         <div style={{ position: 'relative', width, height, overflow: 'hidden' }}>
