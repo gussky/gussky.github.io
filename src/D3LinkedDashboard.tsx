@@ -33,7 +33,7 @@ function findBetterAlternative(target: FoodPoint, allData: FoodPoint[]) {
       (
           // CONDITION: Must be strictly better in at least one metric and not worse in the other
           (scoreMap[p.nutriscore.toLowerCase()] < scoreMap[target.nutriscore.toLowerCase()] && p.nova <= target.nova) ||
-          (target.nova === '4' && p.nova < target.nova && scoreMap[p.nutriscore.toLowerCase()] <= scoreMap[target.nutriscore.toLowerCase()])
+          (p.nova < target.nova && scoreMap[p.nutriscore.toLowerCase()] <= scoreMap[target.nutriscore.toLowerCase()])
       )
   );
 
