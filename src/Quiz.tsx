@@ -137,7 +137,7 @@ const Quiz = ({
                         ? <CheckCircle size={18} style={{ color: '#10b981' }}/>
                         : <XCircle size={18} style={{ color: '#ef4444' }}/>
                     )}
-                    {changed && <span style={{ fontSize: '12px', color: '#3b82f6', backgroundColor: '#dbeafe', padding: '2px 8px', borderRadius: '12px' }}>(Changed)</span>}
+                    {isSubmitted && showResults && changed && <span style={{ fontSize: '12px', color: '#3b82f6', backgroundColor: '#dbeafe', padding: '2px 8px', borderRadius: '12px' }}>(Changed)</span>}
                   </h3>
                   <span style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{product.category}</span>
                   {isSubmitted && showResults && preAnswers && (

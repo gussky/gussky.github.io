@@ -12,7 +12,8 @@ import {
   FlaskConical,
   BarChart3,
   Store,
-  ChevronDown
+  ChevronDown,
+  MousePointer2
 } from 'lucide-react';
 
 // --- VISUAL CONFIGURATION ---
@@ -589,6 +590,8 @@ const Visualization2 = ({ data }: { data: any }) => {
   const linksSelectionRef = useRef<d3.Selection<SVGLineElement, any, SVGGElement, any> | null>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const minScaleRef = useRef<number>(1);
+  const [scrollZoomEnabled, setScrollZoomEnabled] = useState(false);
+  const scrollZoomEnabledRef = useRef(false); // Ref for use in zoom filter
 
   // Extract available brands from dataset
   const availableBrands = useMemo(() => {
@@ -618,6 +621,11 @@ const Visualization2 = ({ data }: { data: any }) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 50);
   }, [data]);
+
+  // Keep scroll zoom ref in sync with state (for use in zoom filter)
+  useEffect(() => {
+    scrollZoomEnabledRef.current = scrollZoomEnabled;
+  }, [scrollZoomEnabled]);
 
   // Process data - filter by brand if selected
   const processedData = useMemo(() => {
@@ -694,10 +702,10 @@ const Visualization2 = ({ data }: { data: any }) => {
           const currentTransform = d3.zoomTransform(svgElement);
           const currentScale = currentTransform.k || 1;
           
-          // Left popup: left: 20px, width: 500px (ends at 520px)
+          // Left popup: left: 20px, width: 400px (ends at 420px)
           // Right panel: dynamic width based on screen size
           const panelWidth = window.innerWidth < 768 ? Math.min(320, window.innerWidth - 40) : Math.min(400, window.innerWidth * 0.35);
-          const leftPopupEnd = 520;
+          const leftPopupEnd = 420;
           const rightPanelStart = containerWidth - panelWidth;
           const centerBetweenPopups = (leftPopupEnd + rightPanelStart) / 2;
           
@@ -907,8 +915,8 @@ const Visualization2 = ({ data }: { data: any }) => {
       const plotX = x + margin.left;
       const plotY = y + margin.top;
 
-      // Y-axis: 0 (best) at bottom, 40 (worst) at top - matching popup style
-      const scaleY = d3.scaleLinear().domain([0, 40]).range([plotY + plotH, plotY]);
+      // Y-axis: -15 (best) at bottom, 40 (worst) at top - includes negative values
+      const scaleY = d3.scaleLinear().domain([-15, 40]).range([plotY + plotH, plotY]);
       const scaleX = d3.scaleBand().domain(availableNovaGroups.map(String)).range([plotX, plotX + plotW]).padding(0.3);
 
       // Background - light grey like popup
@@ -921,8 +929,8 @@ const Visualization2 = ({ data }: { data: any }) => {
         .attr("stroke", "#e2e8f0")
         .attr("stroke-width", 0.5);
 
-      // Grid lines (fewer to reduce clutter)
-      [0, 20, 40].forEach(v => {
+      // Grid lines (fewer to reduce clutter) - include negative values
+      [-15, 0, 20, 40].forEach(v => {
         const ty = scaleY(v);
         content.append("line")
           .attr("x1", plotX)
@@ -943,8 +951,8 @@ const Visualization2 = ({ data }: { data: any }) => {
         .attr("stroke", "#1e293b")
         .attr("stroke-width", Math.max(1.5, r/20));
       
-      // Y-axis labels: Show key values with larger, more visible text
-      [0, 20, 40].forEach(v => {
+      // Y-axis labels: Show key values with larger, more visible text - include negative
+      [-15, 0, 20, 40].forEach(v => {
         const ty = scaleY(v);
         content.append("line")
           .attr("x1", plotX - 3)
@@ -1211,17 +1219,32 @@ const Visualization2 = ({ data }: { data: any }) => {
     minScaleRef.current = minScale;
     
     let zoomTimeout: NodeJS.Timeout | null = null;
+    
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([minScale, 8]) // Increased max scale to allow deeper zoom
-      .translateExtent([[-width, -height], [width * 2, height * 2]])
+      .translateExtent([[-width, -height], [width * 2, height * 2]]) // Allow panning within bounds
       .filter((event: any) => {
+        // Only allow scroll wheel zoom when explicitly enabled via toggle button
         if (event.type === 'wheel') {
-          event.preventDefault();
-          event.stopPropagation();
-          return true;
+          if (scrollZoomEnabledRef.current) {
+            event.preventDefault();
+            event.stopPropagation();
+            return true;
+          }
+          // Let scroll pass through to page for scrollytelling
+          return false;
         }
+        // Allow mouse drag for panning
         if (event.type === 'mousedown' || event.type === 'mousemove') {
           return event.button === 0 || event.button === undefined;
+        }
+        // Allow touch events
+        if (event.type === 'touchstart' || event.type === 'touchmove' || event.type === 'touchend') {
+          return true;
+        }
+        // Allow double-click for zoom
+        if (event.type === 'dblclick') {
+          return true;
         }
         return true;
       })
@@ -1231,12 +1254,9 @@ const Visualization2 = ({ data }: { data: any }) => {
         
         setZoomLevel(e.transform.k);
         const t = e.transform;
-        // Apply transform to mainGroup: translate to center, then apply zoom transform
-        // The zoom transform (t.x, t.y) is relative to the SVG, so we add it to the center
-        mainGroup.attr("transform", `translate(${width/2 + t.x}, ${height/2 + t.y}) scale(${t.k})`);
         
-        // Get current popupNode from closure
-        const currentPopupNode = popupNode;
+        // Apply transform - drag/pan and programmatic transforms
+        mainGroup.attr("transform", `translate(${width/2 + t.x}, ${height/2 + t.y}) scale(${t.k})`);
         
         requestAnimationFrame(() => {
           if (t.k > 1.5) {
@@ -1261,11 +1281,8 @@ const Visualization2 = ({ data }: { data: any }) => {
             
             nodeG.selectAll("g").each(function(d: any) {
               const isVisible = visibleNodeIds.has(d.id);
-              // Hide miniplot if this node is selected (shown in popup)
-              const isSelected = currentPopupNode && currentPopupNode.id === d.id;
-              // Top 5: show box plot (micro-view) unless it's selected, but always show E-number (macro-view)
-              // Others: show just E number (simple-view), hide box plot
-              d3.select(this).selectAll(".micro-view").attr("opacity", (isVisible && !isSelected) ? 1 : 0);
+              // Hide miniplots completely on zoom
+              d3.select(this).selectAll(".micro-view").attr("opacity", 0);
               d3.select(this).selectAll(".simple-view").attr("opacity", isVisible ? 0 : 1);
               // Always show E-number (macro-view) even when zoomed in, but make it more visible for top 5
               d3.select(this).selectAll(".macro-view").attr("opacity", isVisible ? 1 : 0.3);
@@ -1502,7 +1519,7 @@ const Visualization2 = ({ data }: { data: any }) => {
       position: 'relative',
       color: '#1e293b',
       fontFamily: 'sans-serif',
-      overflow: 'visible' // Changed to visible so legend can appear below
+      overflow: 'hidden' // Keep content within container bounds
     }}
     ref={(el) => {
       // Store container ref for popup positioning
@@ -1574,10 +1591,10 @@ const Visualization2 = ({ data }: { data: any }) => {
                 const currentTransform = d3.zoomTransform(svgElement);
                 const currentScale = currentTransform.k || 1;
                 
-                // Left popup: left: 20px, width: 500px (ends at 520px)
+                // Left popup: left: 20px, width: 400px (ends at 420px)
                 // Right panel: dynamic width based on screen size
                 const panelWidth = window.innerWidth < 768 ? Math.min(320, window.innerWidth - 40) : Math.min(400, window.innerWidth * 0.35);
-                const leftPopupEnd = 520;
+                const leftPopupEnd = 420;
                 const rightPanelStart = containerWidth - panelWidth;
                 const centerBetweenPopups = (leftPopupEnd + rightPanelStart) / 2;
                 
@@ -1648,6 +1665,41 @@ const Visualization2 = ({ data }: { data: any }) => {
             title="Reset zoom and pan"
           >
             <RefreshCcw size={14} /> Reset View
+          </button>
+          
+          {/* Scroll Zoom Toggle Button */}
+          <button
+            onClick={() => setScrollZoomEnabled(!scrollZoomEnabled)}
+            style={{
+              padding: '8px 14px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              border: scrollZoomEnabled ? '2px solid #0ea5e9' : '1px solid #e2e8f0',
+              cursor: 'pointer',
+              backgroundColor: scrollZoomEnabled ? '#e0f2fe' : 'white',
+              color: scrollZoomEnabled ? '#0369a1' : '#64748b',
+              transition: 'all 0.2s',
+              boxShadow: scrollZoomEnabled ? '0 0 0 2px rgba(14, 165, 233, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              if (!scrollZoomEnabled) {
+                e.currentTarget.style.backgroundColor = '#f1f5f9';
+                e.currentTarget.style.borderColor = '#cbd5e1';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!scrollZoomEnabled) {
+                e.currentTarget.style.backgroundColor = 'white';
+                e.currentTarget.style.borderColor = '#e2e8f0';
+              }
+            }}
+            title={scrollZoomEnabled ? "Scroll zoom enabled - click to disable" : "Enable scroll wheel zoom"}
+          >
+            <MousePointer2 size={14} /> {scrollZoomEnabled ? 'Scroll Zoom: ON' : 'Scroll Zoom: OFF'}
           </button>
           
           <div style={{ display: 'flex', backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(8px)', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '4px', gap: '4px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)' }}>
@@ -1753,20 +1805,20 @@ const Visualization2 = ({ data }: { data: any }) => {
         ></svg>
       </div>
 
-      {/* Compact Legend - Below Container, Bottom Left Corner */}
+      {/* Compact Legend - Inside Container, Bottom Left Corner */}
       <div style={{
         position: 'absolute',
-        bottom: '-200px', // Position below the container (adjust based on legend height)
+        bottom: '20px', // Position inside the container
         left: '20px',
         zIndex: 20,
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(8px)',
         border: '1px solid #e2e8f0',
-        padding: '12px 14px',
+        padding: '10px 12px',
         borderRadius: '10px',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        maxWidth: window.innerWidth < 768 ? '200px' : '240px',
-        fontSize: '10px'
+        maxWidth: window.innerWidth < 768 ? '180px' : '200px',
+        fontSize: '9px'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <h3 style={{ fontSize: '9px', fontWeight: 'bold', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.05em' }}>Nutri-Score</h3>
@@ -1842,8 +1894,8 @@ const Visualization2 = ({ data }: { data: any }) => {
             borderRadius: '12px',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
             border: '2px solid #e2e8f0',
-            padding: '24px',
-            width: '500px',
+            padding: '16px',
+            width: '400px',
             maxHeight: '100%',
             overflowY: 'auto',
             pointerEvents: 'auto'
@@ -1908,8 +1960,8 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
     const novaGroups = boxPlotData.map((bp: any) => bp.nova).sort((a: number, b: number) => a - b);
     
     // Size to fit container - ensure everything fits within bounds
-    const containerWidth = 500; // Max width of popup container
-    const containerHeight = 350; // Max height of popup container
+    const containerWidth = 400; // Max width of popup container (reduced)
+    const containerHeight = 300; // Max height of popup container (reduced)
     const legendWidth = 25; // Reduced legend width
     const margin = { top: 45, right: 10, bottom: 55, left: 50 }; // Reduced right margin, adjusted others
     const plotW = containerWidth - margin.left - margin.right - legendWidth - 10; // Reserve space for legend
@@ -1926,8 +1978,8 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
 
     const content = svg.append("g");
 
-    // Y-axis: 0 (best) at bottom, 40 (worst) at top - matching screenshot
-    const scaleY = d3.scaleLinear().domain([0, 40]).range([plotY + plotH, plotY]);
+    // Y-axis: -15 (best) at bottom, 40 (worst) at top - includes negative Nutri-Score values
+    const scaleY = d3.scaleLinear().domain([-15, 40]).range([plotY + plotH, plotY]);
     const scaleX = d3.scaleBand().domain(novaGroups.map(String)).range([plotX, plotX + plotW]).padding(0.4);
 
     // Background - light grey grid like screenshot
@@ -1940,8 +1992,8 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
       .attr("stroke", "#e2e8f0")
       .attr("stroke-width", 1);
 
-    // Grid lines
-    [0, 10, 20, 30, 40].forEach(v => {
+    // Grid lines - include negative values
+    [-15, -10, 0, 10, 20, 30, 40].forEach(v => {
       const ty = scaleY(v);
       content.append("line")
         .attr("x1", plotX)
@@ -1962,8 +2014,8 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
       .attr("stroke", "#1e293b")
       .attr("stroke-width", 2);
 
-    // Y-axis labels
-    [0, 10, 20, 30, 40].forEach(v => {
+    // Y-axis labels - include negative values
+    [-15, -10, 0, 10, 20, 30, 40].forEach(v => {
       const ty = scaleY(v);
       content.append("line")
         .attr("x1", plotX - 5)
@@ -2136,7 +2188,7 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
-      <svg ref={svgRef} style={{ display: 'block', width: '100%', height: '100%', maxWidth: '500px', maxHeight: '350px' }}></svg>
+      <svg ref={svgRef} style={{ display: 'block', width: '100%', height: '100%', maxWidth: '400px', maxHeight: '300px' }}></svg>
       <div style={{ marginTop: '20px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
         <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>
           Understanding the Box Plot
@@ -2146,7 +2198,7 @@ const LargeBoxPlotPopup = ({ node }: { node: any }) => {
             <strong>Nova Groups (X-axis):</strong> Categories 1-4 represent the level of food processing, where 1 is minimally processed and 4 is ultra-processed.
           </p>
           <p style={{ marginBottom: '8px' }}>
-            <strong>Nutri-Score (Y-axis):</strong> Ranges from -10 (best, at bottom) to 40 (worst, at top). Lower scores indicate better nutritional quality.
+            <strong>Nutri-Score (Y-axis):</strong> Ranges from -15 (best, at bottom) to 40 (worst, at top). Lower scores indicate better nutritional quality.
           </p>
           <p>
             <strong>Box Plot Elements:</strong> Each box shows the distribution of Nutri-Scores for this additive across products in each Nova Group. The box represents the interquartile range (25th-75th percentile), the line inside is the median, and the whiskers extend to min/max values.

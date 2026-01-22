@@ -277,8 +277,19 @@ export default function ScrollySupermarket() {
                 }} className="w-full h-[75vh] pointer-events-none"/>
 
                 {/* 3. ADDITIVES - Visualization2 */}
-                <Section title="Additives" subtitle="Exploring co-occurrence patterns in food additives.">
-                    <div className="w-full max-w-[2200px] h-[800px]">
+                <Section title="Additives" subtitle="What's really inside these ultra-processed foods? Discover the hidden network of additives."> 
+                    <div className="text-sm text-gray-600 mb-6 max-w-3xl text-center space-y-2">
+                        <p><strong>How to explore:</strong></p>
+                        <ul className="text-left inline-block space-y-1">
+                            <li>• <strong>Click</strong> any node to view its Nutri-Score distribution across NOVA groups</li>
+                            <li>• <strong>Hover</strong> over connections to see which additives co-occur together</li>
+                            <li>• <strong>Switch views</strong> using the Cluster/Grade toggle to organize by function or nutritional quality</li>
+                            <li>• <strong>Draw your prediction</strong> in the side panel to guess the grade distribution, then reveal the answer</li>
+                            <li>• <strong>Filter by brand</strong> to explore additive patterns in specific product lines</li>
+                            <li>• <strong>Navigate:</strong> Drag to pan, double-click to zoom, or enable scroll zoom</li>
+                        </ul>
+                    </div>
+                    <div className="w-full h-[850px]" style={{ maxWidth: '100%' }}>
                         <Visualization2 data={additiveNetworkData}/>
                     </div>
                 </Section>
