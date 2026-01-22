@@ -306,4 +306,3 @@ export default function LinkedD3Dashboard() {
       </div>
   );
 }
-
