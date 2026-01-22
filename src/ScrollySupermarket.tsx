@@ -528,9 +528,9 @@ const Section = ({title, subtitle, children}: any) => (
     </section>
 );
 
-const PlaceholderChart = ({label}: { label?: string }) => (
+/*const PlaceholderChart = ({label}: { label?: string }) => (
     <div
         className="w-full max-w-3xl h-[350px] bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400 font-medium">
         [ {label || "Visualization Area"} ]
     </div>
-);
+);*/
