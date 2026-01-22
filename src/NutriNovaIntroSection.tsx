@@ -9,9 +9,6 @@ const NovaIntroSection: React.FC = () => {
                 <h2 className="text-3xl md:text-5xl font-extrabold mb-6 text-gray-900 font-sans tracking-tight">
                     Wait, there's a catch.
                 </h2>
-                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                    You've just explored the "Nutritional Landscape." You clicked dots, found healthier alternatives, and saw how Nutri-Score grades products based on sugar, fat, and salt.
-                </p>
             </div>
 
             {/* 2. The Concept: Introducing NOVA */}
