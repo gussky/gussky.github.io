@@ -60,8 +60,8 @@ const nutriColor = d3.scaleOrdinal<string, string>()
 
 const NUTRI_GRADES = ["A", "B", "C", "D", "E"];
 
-const CELL_SIZE = 130;
-const PADDING = 100;
+const CELL_SIZE = 150;
+const PADDING = 150;
 const POINT_RADIUS = 2;
 
 /* ---------- COMPONENT ---------- */
@@ -70,8 +70,8 @@ export default function ScatterMatrix() {
     const [hoveredPoint, setHoveredPoint] = useState<FoodData | null>(null);
     const [mousePos, setMousePos] = useState({x: 0, y: 0});
     const svgRef = useRef<SVGSVGElement>(null);
-    const [selectedPoint, setSelectedPoint] = useState<FoodData | null>(null);
 
+  
     /* ---------- Load CSV ---------- */
     useEffect(() => {
         d3.csv("/filtered_milk_and_dairy_products.csv").then(raw => {
@@ -218,14 +218,11 @@ export default function ScatterMatrix() {
                         .attr("fill", d =>
                             nutriColor((d.nutriscore_grade || "").toLowerCase()) || "#999"
                         )
-                        .attr("opacity", d =>
-                            !selectedPoint || d === selectedPoint ? 1 : 0.1
+                        .attr("opacity", 1
                         )
-                        .attr("stroke", d =>
-                            d === selectedPoint ? "#000" : "none"
+                        .attr("stroke", "none"
                         )
-                        .attr("stroke-width", d =>
-                            d === selectedPoint ? 1.5 : 0
+                        .attr("stroke-width", 0
                         )
                         .on("mouseover", (event, d) => {
                             d3.select(event.currentTarget)
@@ -235,14 +232,13 @@ export default function ScatterMatrix() {
                             setHoveredPoint(d);
                             setMousePos({x: event.clientX, y: event.clientY});
                         })
-                        .on("mouseout", (event, d) => {
+                        .on("mouseout", (event) => {
                             d3.select(event.currentTarget)
                                 .attr("r", POINT_RADIUS)
-                                .attr("stroke", d === selectedPoint ? "#000" : "none");
+                                .attr("stroke", "none");
 
                             setHoveredPoint(null);
                         })
-                        .on("click", (_, d) => setSelectedPoint(d));
 
                     // Scatter axes
                     if (i === n - 1) {
@@ -285,7 +281,7 @@ export default function ScatterMatrix() {
             });
         });
 
-    }, [data, selectedPoint]);
+    }, [data]);
 
 
     if (!data.length) return <p>Loading data…</p>;
@@ -382,51 +378,69 @@ export default function ScatterMatrix() {
             </div>
 
 
-            {/* Tooltip with Pie Chart */}
-            {hoveredPoint && (
-                <div
-                    style={{
-                        position: "fixed",
-                        left: mousePos.x + 10,
-                        top: mousePos.y + 10,
-                        background: "white",
-                        border: "2px solid #333",
-                        borderRadius: "6px",
-                        padding: "16px",
-                        fontSize: "14px",
-                        pointerEvents: "none",
-                        zIndex: 1000,
-                        maxWidth: "450px",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
-                    }}
-                >
-                    <div style={{display: "flex", gap: "20px"}}>
-                        {/* Info Section */}
-                        <div style={{flex: 1}}>
-                            <strong style={{fontSize: "15px"}}>{hoveredPoint.product_name || "Unknown product"}</strong><br/>
-                            <div style={{
-                                marginTop: "8px",
-                                paddingTop: "8px",
-                                borderTop: "1px solid #eee",
-                                lineHeight: "1.6"
-                            }}>
-                                <div>Nutri-Score: <strong>{hoveredPoint.nutriscore_grade?.toUpperCase() || "N/A"}</strong>
-                                </div>
-                                <div>Nutri-Score: <strong>{hoveredPoint.nutriscore_score}</strong></div>
-                                <div>NOVA Group: <strong>{hoveredPoint.nova_group || "N/A"}</strong></div>
-                                <div>Energy: <strong>{hoveredPoint["energy-kcal_100g"].toFixed(0)} kcal</strong>/100g
-                                </div>
+           {/* Tooltip with Pie Chart */}
+{hoveredPoint && (
+  <div
+    style={{
+      position: "fixed",
+      left: mousePos.x + 10,
+      top: mousePos.y + 10,
+      background: "white",
+      border: "2px solid #333",
+      borderRadius: "6px",
+      padding: "16px",
+      fontSize: "14px",
+      pointerEvents: "none",
+      zIndex: 1000,
+      maxWidth: "450px",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+    }}
+  >
+    <div style={{ display: "flex", gap: "20px" }}>
+      
+      {/* Info Section */}
+      <div style={{ flex: 1 }}>
+        <strong style={{ fontSize: "15px" }}>
+          {hoveredPoint.product_name || "Unknown product"}
+        </strong>
+        <br />
 
-                            </div>
-                        </div>
+        <div
+          style={{
+            marginTop: "8px",
+            paddingTop: "8px",
+            borderTop: "1px solid #eee",
+            lineHeight: "1.6"
+          }}
+        >
+          <div>
+            Nutri-Score:{" "}
+            <strong>{hoveredPoint.nutriscore_grade?.toUpperCase() || "N/A"}</strong>
+          </div>
+          <div>
+            Nutri-Score: <strong>{hoveredPoint.nutriscore_score}</strong>
+          </div>
+         
+        </div>
+      </div>
 
-                        {/* Pie Chart */}
-                        <div>
-                            <PieChart data={hoveredPoint}/>
-                        </div>
-                    </div>
-                </div>
-            )}
+      {/* Pie Chart Section */}
+      <div style={{ textAlign: "center" }}>
+        <div
+          style={{
+            fontWeight: 600,
+            fontSize: "13px",
+            marginBottom: "6px"
+          }}
+        >
+          Nutrient Composition of Product
+        </div>
+        <PieChart data={hoveredPoint} />
+      </div>
+    </div>
+  </div>
+)}
+
         </div>
     );
 }
@@ -504,7 +518,7 @@ function PieChart({data}: { data: FoodData }) {
 
     }, [data]);
 
-    return <svg ref={svgRef} width={200} height={260}/>;
+    return <svg ref={svgRef} width={300} height={260}/>;
 }
 
 
