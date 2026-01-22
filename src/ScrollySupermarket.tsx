@@ -1,10 +1,10 @@
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import LinkedD3Dashboard from './D3LinkedDashboard.tsx';
-import Visualization1 from './Visualization1.tsx';
+// import Visualization1 from './Visualization1.tsx';
 import Visualization2 from './Visualization2.tsx';
 import Quiz from './Quiz.tsx';
 import RadarComparison from '../components/RadarComparison';
-import meatFishEggsDataRaw from './assets/category_fish_meat_eggs.json';
+// import meatFishEggsDataRaw from './assets/category_fish_meat_eggs.json';
 import additiveNetworkData from './assets/additive_network.json';
 import ScatterMatrix from "../components/ScatterD3"; // adjust path if your file is in pages/ or src/
 import NutrientComposition from "../components/NutrientComposition";
@@ -68,119 +68,119 @@ export default function ScrollySupermarket() {
     const [postQuizSubmitted, setPostQuizSubmitted] = useState(false);
 
     // Chapter 2 (Meat & Fish) scroll pinning state
-    const chapter2SectionRef = useRef<HTMLDivElement>(null);
-    const chapter2SpacerRef = useRef<HTMLDivElement>(null);
-    const [chapter2ScrollProgress, setChapter2ScrollProgress] = useState(0);
-    const containerTopAtStickyRef = useRef<number | null>(null);
+    // const chapter2SectionRef = useRef<HTMLDivElement>(null);
+    // const chapter2SpacerRef = useRef<HTMLDivElement>(null);
+    // const [chapter2ScrollProgress, setChapter2ScrollProgress] = useState(0);
+    // const containerTopAtStickyRef = useRef<number | null>(null);
 
     // Transform meat/fish/eggs data for Visualization1 - this file already contains only meat/fish/eggs products with full nutritional data
-    const transformedFoodData = useMemo(() => {
-        return (meatFishEggsDataRaw as any[]).map((item, index) => ({
-            id: index,
-            productName: item.product_name || `Product ${index}`,
-            shortName: item.short_name || item.product_name?.substring(0, 20) || `Product ${index}`,
-            grade: (item.nutriscore_grade || 'c').toUpperCase(),
-            category: item.pnns_groups_2 || item.main_category || 'Unknown',
-            brand: item.brands || '',
-            additives: item.additives_n || 0,
-            energy: item.energy_kcal || 0,
-            protein: item.proteins || 0,
-            sugar: item.sugars || 0,
-            fat: item.fat || 0,
-            saturatedFat: item.saturated_fat || 0,
-            carbohydrates: item.carbohydrates || 0,
-            fiber: item.fiber || 0,
-            sodium: item.sodium || 0,
-            // Additional metadata
-            nova: item.nova_group?.toString() || '',
-            nutriscore_score: item.nutriscore_score || 0,
-            additives_en: item.additives_en || '',
-            main_category: item.main_category || '',
-            // Keep original data for reference
-            ...item
-        }));
-    }, []);
+    // const transformedFoodData = useMemo(() => {
+    //     return (meatFishEggsDataRaw as any[]).map((item, index) => ({
+    //         id: index,
+    //         productName: item.product_name || `Product ${index}`,
+    //         shortName: item.short_name || item.product_name?.substring(0, 20) || `Product ${index}`,
+    //         grade: (item.nutriscore_grade || 'c').toUpperCase(),
+    //         category: item.pnns_groups_2 || item.main_category || 'Unknown',
+    //         brand: item.brands || '',
+    //         additives: item.additives_n || 0,
+    //         energy: item.energy_kcal || 0,
+    //         protein: item.proteins || 0,
+    //         sugar: item.sugars || 0,
+    //         fat: item.fat || 0,
+    //         saturatedFat: item.saturated_fat || 0,
+    //         carbohydrates: item.carbohydrates || 0,
+    //         fiber: item.fiber || 0,
+    //         sodium: item.sodium || 0,
+    //         // Additional metadata
+    //         nova: item.nova_group?.toString() || '',
+    //         nutriscore_score: item.nutriscore_score || 0,
+    //         additives_en: item.additives_en || '',
+    //         main_category: item.main_category || '',
+    //         // Keep original data for reference
+    //         ...item
+    //     }));
+    // }, []);
 
     // --- CHAPTER 2 SCROLL PINNING LOGIC ---
-    useEffect(() => {
-        const handleChapter2Scroll = () => {
-            if (!chapter2SectionRef.current || !chapter2SpacerRef.current) return;
-
-            const spacer = chapter2SpacerRef.current; // This is the container
-            const section = chapter2SectionRef.current; // This is the sticky element
-            const winHeight = window.innerHeight;
-
-            // Padding configuration: lock periods to analyze charts
-            const paddingBefore = winHeight * 1.5; // 150vh lock before animation starts (analyze stage 1)
-            const animationHeight = winHeight * 2; // 200vh for fast animation between stages (reduced from 300vh)
-
-            // Get positions relative to viewport
-            const containerRect = spacer.getBoundingClientRect();
-            const sectionRect = section.getBoundingClientRect();
-
-            const sectionTop = sectionRect.top;
-            const containerTop = containerRect.top;
-
-            // Progress calculation with lock periods:
-            // - Progress stays at 0 during paddingBefore (LOCK: user analyzes stage 1)
-            // - Progress goes from 0 to 1 during animationHeight (FAST: transitions between stages)
-            // - Progress stays at 1 during paddingAfter (LOCK: user analyzes stage 3)
-
-            if (sectionTop > 0) {
-                // Section hasn't reached viewport top yet - not fully visible, progress = 0
-                containerTopAtStickyRef.current = null; // Reset tracking
-                setChapter2ScrollProgress(0);
-            } else {
-                // Section is sticky (sectionTop <= 0)
-                // Track the containerTop when section first becomes sticky (sectionTop ≈ 0)
-                // This is when we start the lock period for stage 1
-                if (containerTopAtStickyRef.current === null && sectionTop <= 0 && sectionTop >= -10) {
-                    // Section just became sticky - record containerTop at this moment
-                    // This marks the start of the lock period
-                    containerTopAtStickyRef.current = containerTop;
-                }
-
-                if (containerTopAtStickyRef.current !== null) {
-                    // Calculate how much we've scrolled from when section became sticky
-                    // This is the total scroll distance within the pinned section
-                    const scrollFromSticky = containerTopAtStickyRef.current - containerTop;
-
-                    // Map scroll distance to progress with lock periods:
-                    // - 0 to paddingBefore: progress = 0 (LOCK at stage 1 - analyze chart)
-                    // - paddingBefore to paddingBefore + animationHeight: progress = 0 to 1 (FAST animation)
-                    // - paddingBefore + animationHeight to end: progress = 1 (LOCK at stage 3 - analyze chart)
-
-                    if (scrollFromSticky <= paddingBefore) {
-                        // Still in lock period before - keep progress locked at 0
-                        // User can analyze stage 1 (Dendrogram)
-                        setChapter2ScrollProgress(0);
-                    } else if (scrollFromSticky < paddingBefore + animationHeight) {
-                        // In animation range - fast transition between stages
-                        const animationScroll = scrollFromSticky - paddingBefore;
-                        const progress = animationScroll / animationHeight;
-                        setChapter2ScrollProgress(Math.max(0, Math.min(1, progress)));
-                    } else {
-                        // Past animation - lock at stage 3
-                        // User can analyze stage 3 (Parallel Coordinates)
-                        setChapter2ScrollProgress(1);
-                    }
-                } else {
-                    // Section is sticky but we haven't recorded the start point yet
-                    // Keep progress at 0 until we record it
-                    setChapter2ScrollProgress(0);
-                }
-            }
-        };
-
-        window.addEventListener('scroll', handleChapter2Scroll, {passive: true});
-        window.addEventListener('resize', handleChapter2Scroll);
-        handleChapter2Scroll();
-
-        return () => {
-            window.removeEventListener('scroll', handleChapter2Scroll);
-            window.removeEventListener('resize', handleChapter2Scroll);
-        };
-    }, []);
+    // useEffect(() => {
+    //     const handleChapter2Scroll = () => {
+    //         if (!chapter2SectionRef.current || !chapter2SpacerRef.current) return;
+    //
+    //         const spacer = chapter2SpacerRef.current; // This is the container
+    //         const section = chapter2SectionRef.current; // This is the sticky element
+    //         const winHeight = window.innerHeight;
+    //
+    //         // Padding configuration: lock periods to analyze charts
+    //         const paddingBefore = winHeight * 1.5; // 150vh lock before animation starts (analyze stage 1)
+    //         const animationHeight = winHeight * 2; // 200vh for fast animation between stages (reduced from 300vh)
+    //
+    //         // Get positions relative to viewport
+    //         const containerRect = spacer.getBoundingClientRect();
+    //         const sectionRect = section.getBoundingClientRect();
+    //
+    //         const sectionTop = sectionRect.top;
+    //         const containerTop = containerRect.top;
+    //
+    //         // Progress calculation with lock periods:
+    //         // - Progress stays at 0 during paddingBefore (LOCK: user analyzes stage 1)
+    //         // - Progress goes from 0 to 1 during animationHeight (FAST: transitions between stages)
+    //         // - Progress stays at 1 during paddingAfter (LOCK: user analyzes stage 3)
+    //
+    //         if (sectionTop > 0) {
+    //             // Section hasn't reached viewport top yet - not fully visible, progress = 0
+    //             containerTopAtStickyRef.current = null; // Reset tracking
+    //             setChapter2ScrollProgress(0);
+    //         } else {
+    //             // Section is sticky (sectionTop <= 0)
+    //             // Track the containerTop when section first becomes sticky (sectionTop ≈ 0)
+    //             // This is when we start the lock period for stage 1
+    //             if (containerTopAtStickyRef.current === null && sectionTop <= 0 && sectionTop >= -10) {
+    //                 // Section just became sticky - record containerTop at this moment
+    //                 // This marks the start of the lock period
+    //                 containerTopAtStickyRef.current = containerTop;
+    //             }
+    //
+    //             if (containerTopAtStickyRef.current !== null) {
+    //                 // Calculate how much we've scrolled from when section became sticky
+    //                 // This is the total scroll distance within the pinned section
+    //                 const scrollFromSticky = containerTopAtStickyRef.current - containerTop;
+    //
+    //                 // Map scroll distance to progress with lock periods:
+    //                 // - 0 to paddingBefore: progress = 0 (LOCK at stage 1 - analyze chart)
+    //                 // - paddingBefore to paddingBefore + animationHeight: progress = 0 to 1 (FAST animation)
+    //                 // - paddingBefore + animationHeight to end: progress = 1 (LOCK at stage 3 - analyze chart)
+    //
+    //                 if (scrollFromSticky <= paddingBefore) {
+    //                     // Still in lock period before - keep progress locked at 0
+    //                     // User can analyze stage 1 (Dendrogram)
+    //                     setChapter2ScrollProgress(0);
+    //                 } else if (scrollFromSticky < paddingBefore + animationHeight) {
+    //                     // In animation range - fast transition between stages
+    //                     const animationScroll = scrollFromSticky - paddingBefore;
+    //                     const progress = animationScroll / animationHeight;
+    //                     setChapter2ScrollProgress(Math.max(0, Math.min(1, progress)));
+    //                 } else {
+    //                     // Past animation - lock at stage 3
+    //                     // User can analyze stage 3 (Parallel Coordinates)
+    //                     setChapter2ScrollProgress(1);
+    //                 }
+    //             } else {
+    //                 // Section is sticky but we haven't recorded the start point yet
+    //                 // Keep progress at 0 until we record it
+    //                 setChapter2ScrollProgress(0);
+    //             }
+    //         }
+    //     };
+    //
+    //     window.addEventListener('scroll', handleChapter2Scroll, {passive: true});
+    //     window.addEventListener('resize', handleChapter2Scroll);
+    //     handleChapter2Scroll();
+    //
+    //     return () => {
+    //         window.removeEventListener('scroll', handleChapter2Scroll);
+    //         window.removeEventListener('resize', handleChapter2Scroll);
+    //     };
+    // }, []);
 
     // --- SCROLL ENGINE ---
     useEffect(() => {
@@ -384,15 +384,15 @@ export default function ScrollySupermarket() {
                 }} className="w-full h-[75vh] pointer-events-none"/>
 
 
-                {/* 3. MEAT & FISH - PINNED SECTION */}
+                {/* 3. MEAT & FISH - PINNED SECTION - COMMENTED OUT */}
                 {/* Container that creates scroll distance - the sticky section will pin inside this */}
                 {/* Height: 150vh lock before + 200vh fast animation + 150vh lock after = 500vh total */}
+                {/* 
                 <div
                     ref={chapter2SpacerRef}
                     className="relative w-full bg-transparent"
-                    style={{height: '500vh'}} // Total scroll distance with lock periods
+                    style={{height: '500vh'}}
                 >
-                    {/* Sticky section - pins when container reaches viewport top */}
                     <div
                         ref={chapter2SectionRef}
                         className="sticky top-0 w-full z-30"
@@ -413,6 +413,7 @@ export default function ScrollySupermarket() {
                         </Section>
                     </div>
                 </div>
+                */}
 
                 <div ref={el => {
                     gapRefs.current[5] = el;
