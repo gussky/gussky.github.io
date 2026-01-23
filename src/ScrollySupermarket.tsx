@@ -199,8 +199,9 @@ export default function ScrollySupermarket() {
                     title="What are Nutri-Scores and Nutri-Grades?"
                     subtitle="Understand how each nutrient is associated with negative and positive points that combine to produce grades A–E"
                 >
-                    <div className="flex align-center flex-col">
-                        <div className="text-lg text-gray-900 font-medium max-w-[1200px] my-auto text-align-justify">
+                    <div className="flex flex-col items-center">
+
+                        <div className="text-lg text-gray-900 font-medium max-w-[1200px] w-full text-justify">
                             <p>
                                 Ever wondered why two foods can share the same Nutri-Grade even when their nutrient
                                 profiles look very different?

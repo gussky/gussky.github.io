@@ -206,7 +206,7 @@ const NutrientComposition: React.FC<{ csvUrl?: string }> = ({csvUrl = DEFAULT_CS
             // Reserve right side inside SVG for legend
             const legendPanelWidth = 220;
 
-            const margin = {top: 50, right: 30, bottom: 40, left: 50};
+            const margin = {top: 50, right: 30, bottom: 40, left: 120};
             const width = 750 - margin.left - margin.right;
             const height = 450 - margin.top - margin.bottom;
 
@@ -224,6 +224,13 @@ const NutrientComposition: React.FC<{ csvUrl?: string }> = ({csvUrl = DEFAULT_CS
             const svg = svgRoot
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
+ svg.append("text")
+  .attr("x", width / 2)
+  .attr("y", height-390)
+  .attr("text-anchor", "middle")
+  .style("font-size", "10px")
+  .style("font-weight", "bold")
+  .text( "Stacked Bar Chart showing how Nutrients contribute to Nutri-Score");
 
             // Background panel for legend (inside plot window)
             svg
