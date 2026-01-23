@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import * as d3 from "d3";
-import D3Scatter from "./D3Scatter";
+import UMAPScatter from "./UMAPScatter.tsx";
 import foodDataRaw from "./assets/food_umap.json";
 
 // --- Types ---
@@ -207,7 +207,7 @@ export default function LinkedD3Dashboard() {
             </div>
             {interactionMode === 'zoom' && <div className="absolute bottom-4 left-0 w-full text-center z-10 pointer-events-none"><span className="bg-white/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-gray-400 shadow-sm border border-gray-100">Double-click to reset view</span></div>}
             <div className="flex-grow relative rounded-xl overflow-hidden">
-              <D3Scatter
+              <UMAPScatter
                   data={foodData} xAccessor={xFn} yAccessor={yFn} colorAccessor={colorNutri}
                   selectedIndices={selectedIndices} onSelectionChange={setSelectedIndices}
                   onHoverChange={handleHover} onPointClick={handlePointClick}
@@ -223,7 +223,7 @@ export default function LinkedD3Dashboard() {
             </div>
             {interactionMode === 'zoom' && <div className="absolute bottom-4 left-0 w-full text-center z-10 pointer-events-none"><span className="bg-white/80 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-gray-400 shadow-sm border border-gray-100">Double-click to reset view</span></div>}
             <div className="flex-grow relative rounded-xl overflow-hidden">
-              <D3Scatter
+              <UMAPScatter
                   data={foodData} xAccessor={xFn} yAccessor={yFn} colorAccessor={colorNova}
                   selectedIndices={selectedIndices} onSelectionChange={setSelectedIndices}
                   onHoverChange={handleHover} onPointClick={handlePointClick}
