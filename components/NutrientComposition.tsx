@@ -225,7 +225,7 @@ const NutrientComposition: React.FC<{ csvUrl?: string }> = ({csvUrl = DEFAULT_CS
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
  svg.append("text")
-  .attr("x", width / 2)
+  .attr("x", width / 2-30)
   .attr("y", height-390)
   .attr("text-anchor", "middle")
   .style("font-size", "10px")

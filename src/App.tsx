@@ -13,7 +13,7 @@ function App() {
             The Hidden Shape of Food
           </h1>
           <p className="text-xl text-gray-900 mb-6 leading-8 font-medium">
-            We walk the aisles every week, trusting the labels on the front of
+            We walk the supermarket aisles every week, trusting the labels on the front of
             the box. But what if we could see the mathematical reality of what
             we eat?
           </p>
