@@ -9,10 +9,10 @@ const GRADE_COLORS = {
 };
 
 const QUIZ_PRODUCTS = [
-  { id: 1, name: "Fresh Salmon Fillet", category: "Fish Meat Eggs", correct: "A" },
-  { id: 2, name: "Processed Ham Slices", category: "Fish Meat Eggs", correct: "D" },
-  { id: 3, name: "Frozen Fish Sticks", category: "Fish Meat Eggs", correct: "E" },
-  { id: 4, name: "Organic Eggs", category: "Fish Meat Eggs", correct: "A" },
+  {id: 1, name: "High protein shake bananas & cream", category: "Beverages", correct: "B"},
+  {id: 2, name: "Toasted multi-grain cereal with almonds & honey oat clusters", category: "Cereals", correct: "D"},
+  {id: 3, name: "Frozen Fish Sticks", category: "Fish Meat Eggs", correct: "E"},
+  {id: 4, name: "Organic Eggs", category: "Fish Meat Eggs", correct: "A"},
 ];
 
 // Quiz Component

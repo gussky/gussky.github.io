@@ -18,7 +18,7 @@ function App() {
             we eat?
           </p>
           <p className="text-xl text-gray-900 leading-8 font-medium">
-            Using data Visualization to analyze over 30,000 food products, we map
+            Using data visualization to analyze over one million food products, we map
             the hidden connections among nutrient compositions, ingredients and processing.
           </p>
         </div>
