@@ -1218,7 +1218,7 @@ const Visualization2 = ({ data }: { data: any }) => {
     const minScale = Math.min(minScaleX, minScaleY) * 0.95;
     minScaleRef.current = minScale;
     
-    let zoomTimeout: NodeJS.Timeout | null = null;
+    let zoomTimeout: any | null = null;
     
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([minScale, 8]) // Increased max scale to allow deeper zoom
